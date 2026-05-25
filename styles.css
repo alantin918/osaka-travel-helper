@@ -1,0 +1,495 @@
+/* Modern Design System for Osaka Travel Helper */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+
+:root {
+  /* Light Theme Variables */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --accent-color: #3b82f6;
+  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  --accent-glow: rgba(59, 130, 246, 0.15);
+  --border-color: #e2e8f0;
+  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --badge-bg: #eff6ff;
+  --badge-text: #1d4ed8;
+  --highlight-row: rgba(59, 130, 246, 0.04);
+  
+  --transition-speed: 0.3s;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme Variables */
+  --bg-primary: #0b0f19;
+  --bg-secondary: #111827;
+  --bg-card: rgba(17, 24, 39, 0.7);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-color: #60a5fa;
+  --accent-gradient: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  --accent-glow: rgba(96, 165, 250, 0.25);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --badge-bg: rgba(96, 165, 250, 0.1);
+  --badge-text: #93c5fd;
+  --highlight-row: rgba(96, 165, 250, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+  overflow-x: hidden;
+  padding-bottom: 80px;
+}
+
+/* Glassmorphism background effect */
+.blur-bg {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, rgba(255,255,255,0) 70%);
+  z-index: -1;
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.bg-1 { top: -100px; right: -100px; }
+.bg-2 { bottom: 100px; left: -200px; }
+
+/* Header & Navigation */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(15, 23, 42, 0.03);
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color var(--transition-speed);
+}
+
+[data-theme="dark"] header {
+  background-color: rgba(11, 15, 25, 0.7);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.25rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+}
+
+.theme-toggle-btn {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: var(--card-shadow);
+}
+
+.theme-toggle-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-color);
+}
+
+.theme-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+/* Dashboard Hero */
+.hero-section {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.hero-section h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+
+.hero-section p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Base Card Styling */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color var(--transition-speed), background-color var(--transition-speed);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="dark"] .card:hover {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  border-color: rgba(96, 165, 250, 0.4);
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.card-title svg {
+  width: 24px;
+  height: 24px;
+  color: var(--accent-color);
+}
+
+/* Grid layout for insurance and eSIM */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .info-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Insurance Card Content */
+.insurance-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.feature-list {
+  list-style: none;
+  margin: 1.5rem 0;
+}
+
+.feature-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.feature-list li svg {
+  width: 20px;
+  height: 20px;
+  color: #10b981;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.btn-primary {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px var(--accent-glow);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--accent-glow);
+  opacity: 0.95;
+}
+
+/* eSIM Cards Layout */
+.esim-options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.esim-badge {
+  background-color: var(--badge-bg);
+  color: var(--badge-text);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.esim-item {
+  border: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.esim-item:hover {
+  background-color: var(--highlight-row);
+  border-color: var(--accent-color);
+}
+
+.esim-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.esim-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.esim-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* Credit Card Strategy Card */
+.calculator-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+@media (min-width: 768px) {
+  .calculator-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.calc-input {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  width: 100%;
+  max-width: 220px;
+  transition: all 0.2s ease;
+}
+
+.calc-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* Table Container (RWD Scrollable) */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 600px;
+}
+
+th, td {
+  padding: 1.2rem 1.5rem;
+}
+
+th {
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+tr:last-child {
+  border-bottom: none;
+}
+
+tr:hover {
+  background-color: var(--highlight-row);
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+tr:nth-child(1) .rank-badge {
+  background-color: rgba(251, 191, 36, 0.15);
+  color: #d97706;
+}
+
+tr:nth-child(2) .rank-badge {
+  background-color: rgba(156, 163, 175, 0.15);
+  color: #4b5563;
+}
+
+tr:nth-child(3) .rank-badge {
+  background-color: rgba(217, 119, 6, 0.15);
+  color: #b45309;
+}
+
+.card-name {
+  font-weight: 600;
+}
+
+.rebate-rate {
+  font-weight: 700;
+  color: #10b981;
+}
+
+.rebate-value-dynamic {
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.status-normal {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.status-capped {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* Footer styling */
+footer {
+  text-align: center;
+  margin-top: 3rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
