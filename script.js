@@ -41,6 +41,72 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // To-Do Checklist Logic (with LocalStorage)
+  const todoList = document.getElementById('todo-list');
+  const defaultTasks = [
+    { text: '填寫 Visit Japan Web (入境海關申報)', checked: false },
+    { text: '購買威訊 eSIM (已選定 10GB 方案)', checked: false },
+    { text: '線上投保旅遊險 (iCard.ai 比對)', checked: false },
+    { text: '換取少量日幣現鈔', checked: false },
+    { text: '下載大阪地鐵繁體中文 PDF 路線圖', checked: false },
+    { text: '下載並註冊 USJ 官方 App', checked: false }
+  ];
+
+  let savedTasks = JSON.parse(localStorage.getItem('osaka_todo_tasks')) || defaultTasks;
+
+  function renderChecklist() {
+    todoList.innerHTML = '';
+    savedTasks.forEach((task, index) => {
+      const li = document.createElement('li');
+      li.className = `checklist-item ${task.checked ? 'checked' : ''}`;
+      li.innerHTML = `
+        <input type="checkbox" id="task-${index}" ${task.checked ? 'checked' : ''}>
+        <label for="task-${index}" style="cursor: pointer;">
+          <span>${task.text}</span>
+        </label>
+      `;
+      
+      // Bind checkbox change
+      const checkbox = li.querySelector('input');
+      checkbox.addEventListener('change', (e) => {
+        savedTasks[index].checked = e.target.checked;
+        if (e.target.checked) {
+          li.classList.add('checked');
+        } else {
+          li.classList.remove('checked');
+        }
+        localStorage.setItem('osaka_todo_tasks', JSON.stringify(savedTasks));
+      });
+
+      todoList.appendChild(li);
+    });
+  }
+  renderChecklist();
+
+  // Currency Converter Logic
+  const jpyInput = document.getElementById('jpy-input');
+  const twdOutput = document.getElementById('twd-output');
+  const rateInput = document.getElementById('rate-input');
+  const applyBtn = document.getElementById('apply-to-calc');
+
+  jpyInput.addEventListener('input', () => {
+    const rate = parseFloat(rateInput.value) || 0.21;
+    const jpy = parseFloat(jpyInput.value) || 0;
+    twdOutput.value = Math.round(jpy * rate);
+  });
+
+  twdOutput.addEventListener('input', () => {
+    const rate = parseFloat(rateInput.value) || 0.21;
+    const twd = parseFloat(twdOutput.value) || 0;
+    jpyInput.value = rate > 0 ? Math.round(twd / rate) : 0;
+  });
+
+  rateInput.addEventListener('input', () => {
+    const rate = parseFloat(rateInput.value) || 0.21;
+    const jpy = parseFloat(jpyInput.value) || 0;
+    twdOutput.value = Math.round(jpy * rate);
+  });
+
   // Credit Card Calculator Logic
   const spendingInput = document.getElementById('spending-input');
   const tableBody = document.getElementById('table-body');
@@ -56,7 +122,17 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   spendingInput.addEventListener('input', calculateCashback);
-  calculateCashback(); // Run on load
+
+  // Bind applying converted TWD value to spending input
+  applyBtn.addEventListener('click', () => {
+    spendingInput.value = twdOutput.value;
+    calculateCashback();
+    // Scroll smoothly to credit card section
+    document.getElementById('credit-card-section').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // Initial calculation
+  calculateCashback();
 
   function calculateCashback() {
     const totalSpending = parseFloat(spendingInput.value) || 0;
