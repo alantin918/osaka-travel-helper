@@ -292,11 +292,11 @@ header {
   border: 1px solid var(--border-color);
   background-color: rgba(255, 255, 255, 0.02);
   border-radius: 16px;
-  padding: 1.25rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 1rem;
   transition: all 0.2s ease;
 }
 
@@ -309,18 +309,57 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 0.75rem;
 }
 
 .esim-name {
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 800;
+  font-size: 1.2rem;
 }
 
-.esim-details {
-  display: flex;
-  justify-content: space-between;
+.esim-price-tag {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.esim-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
   font-size: 0.9rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.stat-value {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.rating-star {
+  color: #fbbf24;
+}
+
+.esim-review {
+  font-size: 0.85rem;
   color: var(--text-secondary);
+  border-top: 1px solid var(--border-color);
+  padding-top: 0.75rem;
+  line-height: 1.5;
 }
 
 /* Credit Card Strategy Card */
