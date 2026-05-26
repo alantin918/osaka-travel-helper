@@ -579,6 +579,37 @@ tr:nth-child(3) .rank-badge {
   color: var(--text-muted);
 }
 
+/* E-payment styles */
+.epay-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .epay-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.epay-item {
+  border: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.01);
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: all 0.2s ease;
+}
+
+.epay-item:hover {
+  border-color: var(--accent-color);
+  background-color: var(--highlight-row);
+}
+
 /* Footer styling */
 footer {
   text-align: center;
