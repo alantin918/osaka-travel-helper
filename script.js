@@ -110,11 +110,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   renderChecklist();
 
-  // Currency Converter Logic
+  // Currency Converter Logic (with Twin Sync & Coupon Calculation)
   const jpyInput = document.getElementById('jpy-input');
   const twdOutput = document.getElementById('twd-output');
   const rateInput = document.getElementById('rate-input');
   const applyBtn = document.getElementById('apply-to-calc');
+
+  const shoppingJpyInput = document.getElementById('shopping-jpy-input');
+  const shoppingTwdOutput = document.getElementById('shopping-twd-output');
+  const shoppingRateInput = document.getElementById('shopping-rate-input');
+  const shoppingApplyBtn = document.getElementById('shopping-apply-to-calc');
 
   // Fetch live JPY to TWD exchange rate on load
   async function fetchLiveRate() {
@@ -124,13 +129,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data && data.rates && data.rates.TWD) {
         const rate = data.rates.TWD;
         rateInput.value = rate.toFixed(4);
+        if (shoppingRateInput) shoppingRateInput.value = rate.toFixed(4);
         
         // Automatically calculate JPY 10,000 to TWD based on live rate
         const jpyVal = parseFloat(jpyInput.value) || 10000;
         twdOutput.value = Math.round(jpyVal * rate);
+        if (shoppingTwdOutput) shoppingTwdOutput.value = Math.round(jpyVal * rate);
         
-        // Trigger table update if initial value changes
+        // Trigger table update and coupon calculation if initial value changes
         calculateCashback();
+        calculateCoupons();
       }
     } catch (e) {
       console.warn('Failed to fetch live exchange rate, using fallback 0.2100:', e);
@@ -138,23 +146,316 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   fetchLiveRate();
 
-  jpyInput.addEventListener('input', () => {
-    const rate = parseFloat(rateInput.value) || 0.21;
-    const jpy = parseFloat(jpyInput.value) || 0;
-    twdOutput.value = Math.round(jpy * rate);
-  });
+  // Helper: Twin Input Syncing
+  function syncInputs(source) {
+    if (source === 'prep-jpy') {
+      const jpy = parseFloat(jpyInput.value) || 0;
+      const rate = parseFloat(rateInput.value) || 0.21;
+      twdOutput.value = Math.round(jpy * rate);
+      
+      if (shoppingJpyInput) shoppingJpyInput.value = jpyInput.value;
+      if (shoppingTwdOutput) shoppingTwdOutput.value = twdOutput.value;
+    } else if (source === 'prep-twd') {
+      const twd = parseFloat(twdOutput.value) || 0;
+      const rate = parseFloat(rateInput.value) || 0.21;
+      jpyInput.value = rate > 0 ? Math.round(twd / rate) : 0;
+      
+      if (shoppingTwdOutput) shoppingTwdOutput.value = twdOutput.value;
+      if (shoppingJpyInput) shoppingJpyInput.value = jpyInput.value;
+    } else if (source === 'prep-rate') {
+      const rate = parseFloat(rateInput.value) || 0.21;
+      const jpy = parseFloat(jpyInput.value) || 0;
+      twdOutput.value = Math.round(jpy * rate);
+      
+      if (shoppingRateInput) shoppingRateInput.value = rateInput.value;
+      if (shoppingTwdOutput) shoppingTwdOutput.value = twdOutput.value;
+    } else if (source === 'shop-jpy') {
+      const jpy = parseFloat(shoppingJpyInput.value) || 0;
+      const rate = parseFloat(shoppingRateInput.value) || 0.21;
+      if (shoppingTwdOutput) shoppingTwdOutput.value = Math.round(jpy * rate);
+      
+      jpyInput.value = shoppingJpyInput.value;
+      twdOutput.value = shoppingTwdOutput.value;
+    } else if (source === 'shop-twd') {
+      const twd = parseFloat(shoppingTwdOutput.value) || 0;
+      const rate = parseFloat(shoppingRateInput.value) || 0.21;
+      if (shoppingJpyInput) shoppingJpyInput.value = rate > 0 ? Math.round(twd / rate) : 0;
+      
+      twdOutput.value = shoppingTwdOutput.value;
+      jpyInput.value = shoppingJpyInput.value;
+    } else if (source === 'shop-rate') {
+      const rate = parseFloat(shoppingRateInput.value) || 0.21;
+      const jpy = parseFloat(shoppingJpyInput.value) || 0;
+      if (shoppingTwdOutput) shoppingTwdOutput.value = Math.round(jpy * rate);
+      
+      rateInput.value = shoppingRateInput.value;
+      twdOutput.value = shoppingTwdOutput.value;
+    }
+    
+    // Trigger updates on dependant calculations
+    calculateCashback();
+    calculateCoupons();
+  }
 
-  twdOutput.addEventListener('input', () => {
-    const rate = parseFloat(rateInput.value) || 0.21;
-    const twd = parseFloat(twdOutput.value) || 0;
-    jpyInput.value = rate > 0 ? Math.round(twd / rate) : 0;
-  });
+  // Bind input events
+  jpyInput.addEventListener('input', () => syncInputs('prep-jpy'));
+  twdOutput.addEventListener('input', () => syncInputs('prep-twd'));
+  rateInput.addEventListener('input', () => syncInputs('prep-rate'));
 
-  rateInput.addEventListener('input', () => {
-    const rate = parseFloat(rateInput.value) || 0.21;
-    const jpy = parseFloat(jpyInput.value) || 0;
-    twdOutput.value = Math.round(jpy * rate);
-  });
+  if (shoppingJpyInput) shoppingJpyInput.addEventListener('input', () => syncInputs('shop-jpy'));
+  if (shoppingTwdOutput) shoppingTwdOutput.addEventListener('input', () => syncInputs('shop-twd'));
+  if (shoppingRateInput) shoppingRateInput.addEventListener('input', () => syncInputs('shop-rate'));
+
+  // Calculate official store coupons & discounts based on shopping JPY
+  function calculateCoupons() {
+    if (!shoppingJpyInput) return;
+    const jpyVal = parseFloat(shoppingJpyInput.value) || 0;
+    const rate = parseFloat(shoppingRateInput.value) || 0.21;
+
+    // 1. Bic Camera (Threshold: 5,000 JPY for 10% taxfree)
+    const bicPayApplianceEl = document.querySelector('[data-brand="bic-camera"][data-type="appliance"]');
+    const bicPayCosmeticEl = document.querySelector('[data-brand="bic-camera"][data-type="cosmetic"]');
+    const bicSavedEl = document.querySelector('.calc-val-saved[data-brand="bic-camera"]');
+
+    if (jpyVal >= 5000) {
+      const payAppliance = Math.round(jpyVal * 0.93);
+      const payCosmetic = Math.round(jpyVal * 0.95);
+      const savedJpy = Math.round(jpyVal * 0.10) + Math.round(jpyVal * 0.07);
+      const savedTwd = Math.round(savedJpy * rate);
+      
+      if (bicPayApplianceEl) bicPayApplianceEl.innerText = `¥${payAppliance.toLocaleString()}`;
+      if (bicPayCosmeticEl) bicPayCosmeticEl.innerText = `¥${payCosmetic.toLocaleString()}`;
+      if (bicSavedEl) bicSavedEl.innerHTML = `¥${savedJpy.toLocaleString()} (約 NT$${savedTwd.toLocaleString()}) <span style="font-size: 0.72rem; color: #10b981; font-weight: normal; margin-left: 4px;">[已享免稅10%+折7%]</span>`;
+    } else {
+      const payAppliance = Math.round(jpyVal * 1.10);
+      const payCosmetic = Math.round(jpyVal * 1.10);
+      const diffToTaxfree = 5000 - jpyVal;
+      
+      if (bicPayApplianceEl) bicPayApplianceEl.innerText = `¥${payAppliance.toLocaleString()} (含稅)`;
+      if (bicPayCosmeticEl) bicPayCosmeticEl.innerText = `¥${payCosmetic.toLocaleString()} (含稅)`;
+      if (bicSavedEl) bicSavedEl.innerHTML = `<span style="color: var(--text-muted);">差 ¥${diffToTaxfree.toLocaleString()} 達免稅門檻</span>`;
+    }
+
+    // 2. Don Quijote (Threshold: 10,000 JPY for 10% taxfree + 5% discount)
+    const donkiPayEl = document.querySelector('.calc-val-pay-jpy[data-brand="donki"]');
+    const donkiSavedEl = document.querySelector('.calc-val-saved[data-brand="donki"]');
+    const donkiBadgeEl = document.getElementById('donki-discount-badge');
+
+    if (jpyVal >= 10000) {
+      const payJpy = Math.round(jpyVal * 0.95);
+      const savedJpy = Math.round(jpyVal * 0.10) + Math.round(jpyVal * 0.05);
+      const savedTwd = Math.round(savedJpy * rate);
+      if (donkiPayEl) donkiPayEl.innerText = `¥${payJpy.toLocaleString()}`;
+      if (donkiSavedEl) donkiSavedEl.innerHTML = `¥${savedJpy.toLocaleString()} (約 NT$${savedTwd.toLocaleString()}) <span style="font-size: 0.72rem; color: #10b981; font-weight: normal; margin-left: 4px;">[已享免稅10%+折5%]</span>`;
+      if (donkiBadgeEl) {
+        donkiBadgeEl.innerText = '免稅10% + 折5%';
+        donkiBadgeEl.style.backgroundColor = '';
+        donkiBadgeEl.style.color = '';
+      }
+    } else if (jpyVal >= 5000) {
+      const payJpy = jpyVal;
+      const savedJpy = Math.round(jpyVal * 0.10);
+      const savedTwd = Math.round(savedJpy * rate);
+      const diffToDiscount = 10000 - jpyVal;
+      if (donkiPayEl) donkiPayEl.innerText = `¥${payJpy.toLocaleString()}`;
+      if (donkiSavedEl) donkiSavedEl.innerHTML = `¥${savedJpy.toLocaleString()} (約 NT$${savedTwd.toLocaleString()}) <br><span style="font-size: 0.72rem; color: var(--text-muted);">再買 ¥${diffToDiscount.toLocaleString()} 享額外 5% 折扣</span>`;
+      if (donkiBadgeEl) {
+        donkiBadgeEl.innerText = '僅免稅 10%';
+        donkiBadgeEl.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+        donkiBadgeEl.style.color = '#10b981';
+      }
+    } else {
+      const payJpy = Math.round(jpyVal * 1.10);
+      const diffToTaxfree = 5000 - jpyVal;
+      if (donkiPayEl) donkiPayEl.innerText = `¥${payJpy.toLocaleString()} (含稅)`;
+      if (donkiSavedEl) donkiSavedEl.innerHTML = `<span style="color: var(--text-muted);">差 ¥${diffToTaxfree.toLocaleString()} 達免稅門檻</span>`;
+      if (donkiBadgeEl) {
+        donkiBadgeEl.innerText = '滿 1 萬折 5%';
+        donkiBadgeEl.style.backgroundColor = '';
+        donkiBadgeEl.style.color = '';
+      }
+    }
+
+    // 3. Matsumoto Kiyoshi (10k -> 3%, 30k -> 5%, 50k -> 7%)
+    const matsumotoRateEl = document.querySelector('.calc-val-rate[data-brand="matsumoto"]');
+    const matsumotoPayEl = document.querySelector('.calc-val-pay-jpy[data-brand="matsumoto"]');
+    const matsumotoSavedEl = document.querySelector('.calc-val-saved[data-brand="matsumoto"]');
+    const matsumotoBadgeEl = document.getElementById('matsumoto-discount-badge');
+
+    let matsumotoDiscount = 0;
+    if (jpyVal >= 50000) matsumotoDiscount = 0.07;
+    else if (jpyVal >= 30000) matsumotoDiscount = 0.05;
+    else if (jpyVal >= 10000) matsumotoDiscount = 0.03;
+
+    if (jpyVal >= 5000) {
+      const payJpy = Math.round(jpyVal * (1 - matsumotoDiscount));
+      const savedJpy = Math.round(jpyVal * 0.10) + Math.round(jpyVal * matsumotoDiscount);
+      const savedTwd = Math.round(savedJpy * rate);
+      
+      if (matsumotoRateEl) matsumotoRateEl.innerText = `${(matsumotoDiscount * 100).toFixed(0)}%`;
+      if (matsumotoPayEl) matsumotoPayEl.innerText = `¥${payJpy.toLocaleString()}`;
+      
+      let nextStepTip = '';
+      if (matsumotoDiscount === 0) {
+        nextStepTip = `<br><span style="font-size: 0.72rem; color: var(--text-muted);">再買 ¥${(10000 - jpyVal).toLocaleString()} 享折 3%</span>`;
+      } else if (matsumotoDiscount === 0.03) {
+        nextStepTip = `<br><span style="font-size: 0.72rem; color: var(--text-muted);">再買 ¥${(30000 - jpyVal).toLocaleString()} 享折 5%</span>`;
+      } else if (matsumotoDiscount === 0.05) {
+        nextStepTip = `<br><span style="font-size: 0.72rem; color: var(--text-muted);">再買 ¥${(50000 - jpyVal).toLocaleString()} 享折 7%</span>`;
+      }
+
+      if (matsumotoSavedEl) matsumotoSavedEl.innerHTML = `¥${savedJpy.toLocaleString()} (約 NT$${savedTwd.toLocaleString()}) <span style="font-size: 0.72rem; color: #10b981; font-weight: normal; margin-left: 4px;">[已享免稅+折${(matsumotoDiscount*100).toFixed(0)}%]</span>${nextStepTip}`;
+      
+      if (matsumotoBadgeEl) {
+        if (matsumotoDiscount > 0) {
+          matsumotoBadgeEl.innerText = `免稅10% + 折${(matsumotoDiscount*100).toFixed(0)}%`;
+          matsumotoBadgeEl.style.backgroundColor = '';
+          matsumotoBadgeEl.style.color = '';
+        } else {
+          matsumotoBadgeEl.innerText = `僅免稅 10%`;
+          matsumotoBadgeEl.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+          matsumotoBadgeEl.style.color = '#10b981';
+        }
+      }
+    } else {
+      if (matsumotoRateEl) matsumotoRateEl.innerText = '0%';
+      if (matsumotoPayEl) matsumotoPayEl.innerText = `¥${Math.round(jpyVal * 1.10).toLocaleString()} (含稅)`;
+      const diffToTaxfree = 5000 - jpyVal;
+      if (matsumotoSavedEl) matsumotoSavedEl.innerHTML = `<span style="color: var(--text-muted);">差 ¥${diffToTaxfree.toLocaleString()} 達免稅門檻</span>`;
+      if (matsumotoBadgeEl) {
+        matsumotoBadgeEl.innerText = `滿額折 3%~7%`;
+        matsumotoBadgeEl.style.backgroundColor = '';
+        matsumotoBadgeEl.style.color = '';
+      }
+    }
+
+    // 4. SUNDRUG (10k -> 3%, 30k -> 5%, 50k -> 7%)
+    const sundrugRateEl = document.querySelector('.calc-val-rate[data-brand="sundrug"]');
+    const sundrugPayEl = document.querySelector('.calc-val-pay-jpy[data-brand="sundrug"]');
+    const sundrugSavedEl = document.querySelector('.calc-val-saved[data-brand="sundrug"]');
+    const sundrugBadgeEl = document.getElementById('sundrug-discount-badge');
+
+    let sundrugDiscount = 0;
+    if (jpyVal >= 50000) sundrugDiscount = 0.07;
+    else if (jpyVal >= 30000) sundrugDiscount = 0.05;
+    else if (jpyVal >= 10000) sundrugDiscount = 0.03;
+
+    if (jpyVal >= 5000) {
+      const payJpy = Math.round(jpyVal * (1 - sundrugDiscount));
+      const savedJpy = Math.round(jpyVal * 0.10) + Math.round(jpyVal * sundrugDiscount);
+      const savedTwd = Math.round(savedJpy * rate);
+      
+      if (sundrugRateEl) sundrugRateEl.innerText = `${(sundrugDiscount * 100).toFixed(0)}%`;
+      if (sundrugPayEl) sundrugPayEl.innerText = `¥${payJpy.toLocaleString()}`;
+      
+      let nextStepTip = '';
+      if (sundrugDiscount === 0) {
+        nextStepTip = `<br><span style="font-size: 0.72rem; color: var(--text-muted);">再買 ¥${(10000 - jpyVal).toLocaleString()} 享折 3%</span>`;
+      } else if (sundrugDiscount === 0.03) {
+        nextStepTip = `<br><span style="font-size: 0.72rem; color: var(--text-muted);">再買 ¥${(30000 - jpyVal).toLocaleString()} 享折 5%</span>`;
+      } else if (sundrugDiscount === 0.05) {
+        nextStepTip = `<br><span style="font-size: 0.72rem; color: var(--text-muted);">再買 ¥${(50000 - jpyVal).toLocaleString()} 享折 7%</span>`;
+      }
+
+      if (sundrugSavedEl) sundrugSavedEl.innerHTML = `¥${savedJpy.toLocaleString()} (約 NT$${savedTwd.toLocaleString()}) <span style="font-size: 0.72rem; color: #10b981; font-weight: normal; margin-left: 4px;">[已享免稅+折${(sundrugDiscount*100).toFixed(0)}%]</span>${nextStepTip}`;
+      
+      if (sundrugBadgeEl) {
+        if (sundrugDiscount > 0) {
+          sundrugBadgeEl.innerText = `免稅10% + 折${(sundrugDiscount*100).toFixed(0)}%`;
+          sundrugBadgeEl.style.backgroundColor = '';
+          sundrugBadgeEl.style.color = '';
+        } else {
+          sundrugBadgeEl.innerText = `僅免稅 10%`;
+          sundrugBadgeEl.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+          sundrugBadgeEl.style.color = '#10b981';
+        }
+      }
+    } else {
+      if (sundrugRateEl) sundrugRateEl.innerText = '0%';
+      if (sundrugPayEl) sundrugPayEl.innerText = `¥${Math.round(jpyVal * 1.10).toLocaleString()} (含稅)`;
+      const diffToTaxfree = 5000 - jpyVal;
+      if (sundrugSavedEl) sundrugSavedEl.innerHTML = `<span style="color: var(--text-muted);">差 ¥${diffToTaxfree.toLocaleString()} 達免稅門檻</span>`;
+      if (sundrugBadgeEl) {
+        sundrugBadgeEl.innerText = `滿額折 3%~7%`;
+        sundrugBadgeEl.style.backgroundColor = '';
+        sundrugBadgeEl.style.color = '';
+      }
+    }
+
+    // 5. Daikoku Drug (30k -> 5%, 50k -> 7%)
+    const daikokuRateEl = document.querySelector('.calc-val-rate[data-brand="daikoku"]');
+    const daikokuPayEl = document.querySelector('.calc-val-pay-jpy[data-brand="daikoku"]');
+    const daikokuSavedEl = document.querySelector('.calc-val-saved[data-brand="daikoku"]');
+    const daikokuBadgeEl = document.getElementById('daikoku-discount-badge');
+
+    let daikokuDiscount = 0;
+    if (jpyVal >= 50000) daikokuDiscount = 0.07;
+    else if (jpyVal >= 30000) daikokuDiscount = 0.05;
+
+    if (jpyVal >= 5000) {
+      const payJpy = Math.round(jpyVal * (1 - daikokuDiscount));
+      const savedJpy = Math.round(jpyVal * 0.10) + Math.round(jpyVal * daikokuDiscount);
+      const savedTwd = Math.round(savedJpy * rate);
+      
+      if (daikokuRateEl) daikokuRateEl.innerText = `${(daikokuDiscount * 100).toFixed(0)}%`;
+      if (daikokuPayEl) daikokuPayEl.innerText = `¥${payJpy.toLocaleString()}`;
+      
+      let nextStepTip = '';
+      if (daikokuDiscount === 0) {
+        nextStepTip = `<br><span style="font-size: 0.72rem; color: var(--text-muted);">再買 ¥${(30000 - jpyVal).toLocaleString()} 享折 5%</span>`;
+      } else if (daikokuDiscount === 0.05) {
+        nextStepTip = `<br><span style="font-size: 0.72rem; color: var(--text-muted);">再買 ¥${(50000 - jpyVal).toLocaleString()} 享折 7%</span>`;
+      }
+
+      if (daikokuSavedEl) daikokuSavedEl.innerHTML = `¥${savedJpy.toLocaleString()} (約 NT$${savedTwd.toLocaleString()}) <span style="font-size: 0.72rem; color: #10b981; font-weight: normal; margin-left: 4px;">[已享免稅+折${(daikokuDiscount*100).toFixed(0)}%]</span>${nextStepTip}`;
+      
+      if (daikokuBadgeEl) {
+        if (daikokuDiscount > 0) {
+          daikokuBadgeEl.innerText = `免稅10% + 折${(daikokuDiscount*100).toFixed(0)}%`;
+          daikokuBadgeEl.style.backgroundColor = '';
+          daikokuBadgeEl.style.color = '';
+        } else {
+          daikokuBadgeEl.innerText = `僅免稅 10%`;
+          daikokuBadgeEl.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+          daikokuBadgeEl.style.color = '#10b981';
+        }
+      }
+    } else {
+      if (daikokuRateEl) daikokuRateEl.innerText = '0%';
+      if (daikokuPayEl) daikokuPayEl.innerText = `¥${Math.round(jpyVal * 1.10).toLocaleString()} (含稅)`;
+      const diffToTaxfree = 5000 - jpyVal;
+      if (daikokuSavedEl) daikokuSavedEl.innerHTML = `<span style="color: var(--text-muted);">差 ¥${diffToTaxfree.toLocaleString()} 達免稅門檻</span>`;
+      if (daikokuBadgeEl) {
+        daikokuBadgeEl.innerText = `滿額折 5%~7%`;
+        daikokuBadgeEl.style.backgroundColor = '';
+        daikokuBadgeEl.style.color = '';
+      }
+    }
+  }
+
+  // Bind applying converted TWD value from shopping calculator to spending input
+  if (shoppingApplyBtn) {
+    shoppingApplyBtn.addEventListener('click', () => {
+      if (shoppingTwdOutput) {
+        spendingInput.value = shoppingTwdOutput.value;
+        calculateCashback();
+      }
+      
+      // Automatically switch to tab-finance
+      const financeTabBtn = document.querySelector('.tab-btn[data-tab="finance"]');
+      if (financeTabBtn) {
+        financeTabBtn.click();
+      }
+      
+      // Scroll smoothly to credit card section
+      setTimeout(() => {
+        const ccSection = document.getElementById('credit-card-section');
+        if (ccSection) {
+          ccSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 150);
+    });
+  }
 
   // Credit Card & E-Payment Calculator Logic (Guaranteed/Conservative Mode - Excludes limited bank-specific extra bonuses)
   const spendingInput = document.getElementById('spending-input');

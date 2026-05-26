@@ -737,3 +737,185 @@ footer {
     height: 180px;
   }
 }
+
+/* --- Coupon Section Styling (Tab: Shopping) --- */
+
+.coupon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.coupon-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color var(--transition-speed);
+}
+
+.coupon-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+}
+
+.coupon-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] .coupon-card:hover {
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.4);
+}
+
+/* 店家主題色彩與點綴 (透過 card 左邊條與 hover 邊框) */
+.bic-camera-card::before { background-color: #ef4444; }
+.bic-camera-card:hover { border-color: rgba(239, 68, 68, 0.4); }
+
+.donki-card::before { background-color: #fbbf24; }
+.donki-card:hover { border-color: rgba(251, 191, 36, 0.4); }
+
+.matsumoto-card::before { background-color: #3b82f6; }
+.matsumoto-card:hover { border-color: rgba(59, 130, 246, 0.4); }
+
+.sundrug-card::before { background-color: #dc2626; }
+.sundrug-card:hover { border-color: rgba(220, 38, 38, 0.4); }
+
+.daikoku-card::before { background-color: #f97316; }
+.daikoku-card:hover { border-color: rgba(249, 115, 22, 0.4); }
+
+.coupon-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.75rem;
+}
+
+.coupon-brand {
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--text-primary);
+}
+
+.coupon-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.badge-taxfree {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.badge-discount {
+  background-color: var(--badge-bg);
+  color: var(--badge-text);
+}
+
+.coupon-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.coupon-rule {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.coupon-calc-box {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.88rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.coupon-calc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.coupon-calc-row strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.coupon-calc-row.highlight {
+  border-top: 1px dashed var(--border-color);
+  padding-top: 0.5rem;
+  margin-top: 0.25rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.coupon-calc-row.highlight .calc-val-saved {
+  color: #10b981;
+}
+
+.coupon-footer {
+  margin-top: 0.5rem;
+}
+
+.coupon-btn {
+  display: block;
+  width: 100%;
+  padding: 0.65rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.coupon-btn:hover {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 10px var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .coupon-btn:hover {
+  color: #0b0f19;
+  background-color: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(255,255,255,0.15);
+}

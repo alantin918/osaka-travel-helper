@@ -87,6 +87,14 @@
         </svg>
         玩樂攻略 & App
       </button>
+      <button class="tab-btn" data-tab="shopping">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        購物優惠
+      </button>
     </div>
 
     <!-- Tab 1: 行前與天氣 -->
@@ -755,6 +763,199 @@
       </div>
     </section>
     </div> <!-- End of Tab 3: guide -->
+
+    <!-- Tab 4: 購物優惠 -->
+    <div id="tab-shopping" class="tab-content">
+      <!-- 同步計算機卡片 -->
+      <section class="card" id="shopping-converter-card">
+        <h2 class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          日幣 / 台幣購物換算器
+        </h2>
+        <div class="converter-inputs" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="shopping-jpy-input">日幣金額 (未稅 JPY)</label>
+              <div class="input-wrapper">
+                <span class="currency-symbol">¥</span>
+                <input type="number" id="shopping-jpy-input" class="calc-input" value="10000" min="0" style="max-width: 100%;">
+              </div>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="shopping-twd-output">折合台幣 (TWD)</label>
+              <div class="input-wrapper">
+                <span class="currency-symbol">$</span>
+                <input type="number" id="shopping-twd-output" class="calc-input" value="2100" min="0" style="max-width: 100%;">
+              </div>
+            </div>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed var(--border-color); padding-top: 0.75rem; flex-wrap: wrap; gap: 0.75rem;">
+            <span>設定匯率：1 JPY = <input type="number" id="shopping-rate-input" value="0.210" step="0.001" style="width: 60px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary); text-align: center; border-radius: 6px; padding: 0.15rem 0.25rem;"> TWD</span>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span style="font-size: 0.75rem; color: var(--text-muted);">※ 試算以未稅消費金額為基準</span>
+              <button id="shopping-apply-to-calc" class="btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; margin: 0; border-radius: 8px;">套用至刷卡計算機</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 優惠券卡片網格 -->
+      <div class="coupon-grid" style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+        <!-- Card 1: Bic Camera -->
+        <div class="coupon-card bic-camera-card">
+          <div class="coupon-header">
+            <span class="coupon-brand">Bic Camera 🔴🔵</span>
+            <div class="coupon-badges">
+              <span class="badge badge-taxfree">免稅 10%</span>
+              <span class="badge badge-discount">最高折 7%</span>
+            </div>
+          </div>
+          <div class="coupon-body">
+            <p class="coupon-rule">門檻：未稅消費滿 5,000 日圓</p>
+            <div class="coupon-calc-box">
+              <div class="coupon-calc-row">
+                <span>估計實付 (電器折7%)：</span>
+                <strong class="calc-val-pay-jpy" data-brand="bic-camera" data-type="appliance">¥9,300</strong>
+              </div>
+              <div class="coupon-calc-row">
+                <span>估計實付 (藥妝折5%)：</span>
+                <strong class="calc-val-pay-jpy" data-brand="bic-camera" data-type="cosmetic">¥9,500</strong>
+              </div>
+              <div class="coupon-calc-row highlight">
+                <span>本次約省下：</span>
+                <span class="calc-val-saved" data-brand="bic-camera">¥1,700 (約 NT$357)</span>
+              </div>
+            </div>
+          </div>
+          <div class="coupon-footer">
+            <a href="https://www.biccamera.com.cn/shopguide/index.html" target="_blank" rel="noopener noreferrer" class="coupon-btn">打開官方免稅券條碼</a>
+          </div>
+        </div>
+
+        <!-- Card 2: Don Quijote -->
+        <div class="coupon-card donki-card">
+          <div class="coupon-header">
+            <span class="coupon-brand">驚安殿堂 唐吉訶德 🟡🐧</span>
+            <div class="coupon-badges">
+              <span class="badge badge-taxfree">免稅 10%</span>
+              <span class="badge badge-discount" id="donki-discount-badge">滿 1 萬折 5%</span>
+            </div>
+          </div>
+          <div class="coupon-body">
+            <p class="coupon-rule">門檻：未稅消費滿 10,000 日圓</p>
+            <div class="coupon-calc-box">
+              <div class="coupon-calc-row">
+                <span>折扣後實付：</span>
+                <strong class="calc-val-pay-jpy" data-brand="donki">¥9,500</strong>
+              </div>
+              <div class="coupon-calc-row highlight">
+                <span>本次約省下：</span>
+                <span class="calc-val-saved" data-brand="donki">¥1,500 (約 NT$315)</span>
+              </div>
+            </div>
+          </div>
+          <div class="coupon-footer">
+            <a href="https://www.donki.com/travel/coupon/" target="_blank" rel="noopener noreferrer" class="coupon-btn">開啟官方電子折價券</a>
+          </div>
+        </div>
+
+        <!-- Card 3: Matsumoto Kiyoshi -->
+        <div class="coupon-card matsumoto-card">
+          <div class="coupon-header">
+            <span class="coupon-brand">松本清藥妝 🟡🔵</span>
+            <div class="coupon-badges">
+              <span class="badge badge-taxfree">免稅 10%</span>
+              <span class="badge badge-discount" id="matsumoto-discount-badge">滿額折 3%~7%</span>
+            </div>
+          </div>
+          <div class="coupon-body">
+            <p class="coupon-rule">門檻：滿 1 萬折 3% / 滿 3 萬折 5% / 滿 5 萬折 7%</p>
+            <div class="coupon-calc-box">
+              <div class="coupon-calc-row">
+                <span>目前適用折率：</span>
+                <strong class="calc-val-rate" data-brand="matsumoto">3%</strong>
+              </div>
+              <div class="coupon-calc-row">
+                <span>折扣後實付：</span>
+                <strong class="calc-val-pay-jpy" data-brand="matsumoto">¥9,700</strong>
+              </div>
+              <div class="coupon-calc-row highlight">
+                <span>本次約省下：</span>
+                <span class="calc-val-saved" data-brand="matsumoto">¥1,300 (約 NT$273)</span>
+              </div>
+            </div>
+          </div>
+          <div class="coupon-footer">
+            <a href="https://www.matsukiyococokara-online.com/campaign/taxfree/" target="_blank" rel="noopener noreferrer" class="coupon-btn">開啟官方免稅頁面</a>
+          </div>
+        </div>
+
+        <!-- Card 4: Sundrug -->
+        <div class="coupon-card sundrug-card">
+          <div class="coupon-header">
+            <span class="coupon-brand">SUNDRUG 藥妝 🔴</span>
+            <div class="coupon-badges">
+              <span class="badge badge-taxfree">免稅 10%</span>
+              <span class="badge badge-discount" id="sundrug-discount-badge">滿額折 3%~7%</span>
+            </div>
+          </div>
+          <div class="coupon-body">
+            <p class="coupon-rule">門檻：滿 1 萬折 3% / 滿 3 萬折 5% / 滿 5 萬折 7%</p>
+            <div class="coupon-calc-box">
+              <div class="coupon-calc-row">
+                <span>目前適用折率：</span>
+                <strong class="calc-val-rate" data-brand="sundrug">3%</strong>
+              </div>
+              <div class="coupon-calc-row">
+                <span>折扣後實付：</span>
+                <strong class="calc-val-pay-jpy" data-brand="sundrug">¥9,700</strong>
+              </div>
+              <div class="coupon-calc-row highlight">
+                <span>本次約省下：</span>
+                <span class="calc-val-saved" data-brand="sundrug">¥1,300 (約 NT$273)</span>
+              </div>
+            </div>
+          </div>
+          <div class="coupon-footer">
+            <a href="https://www.sundrug.co.jp/" target="_blank" rel="noopener noreferrer" class="coupon-btn">開啟官方資訊頁面</a>
+          </div>
+        </div>
+
+        <!-- Card 5: Daikoku Drug -->
+        <div class="coupon-card daikoku-card">
+          <div class="coupon-header">
+            <span class="coupon-brand">大國藥妝 🟠🔵</span>
+            <div class="coupon-badges">
+              <span class="badge badge-taxfree">免稅 10%</span>
+              <span class="badge badge-discount" id="daikoku-discount-badge">滿額折 5%~7%</span>
+            </div>
+          </div>
+          <div class="coupon-body">
+            <p class="coupon-rule">門檻：滿 3 萬折 5% / 滿 5 萬折 7%</p>
+            <div class="coupon-calc-box">
+              <div class="coupon-calc-row">
+                <span>目前適用折率：</span>
+                <strong class="calc-val-rate" data-brand="daikoku">0%</strong>
+              </div>
+              <div class="coupon-calc-row">
+                <span>折扣後實付：</span>
+                <strong class="calc-val-pay-jpy" data-brand="daikoku">¥10,000</strong>
+              </div>
+              <div class="coupon-calc-row highlight">
+                <span>本次約省下：</span>
+                <span class="calc-val-saved" data-brand="daikoku">¥1,000 (約 NT$210)</span>
+              </div>
+            </div>
+          </div>
+          <div class="coupon-footer">
+            <a href="https://www.daikokudrug.com/" target="_blank" rel="noopener noreferrer" class="coupon-btn">開啟官方資訊頁面</a>
+          </div>
+        </div>
+      </div>
+    </div> <!-- End of Tab 4: shopping -->
   </main>
 
   <footer>
