@@ -617,3 +617,123 @@ footer {
   color: var(--text-muted);
   font-size: 0.85rem;
 }
+
+/* Tab Navigation & Transitions */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0 2rem 0;
+  padding: 0.35rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--card-shadow);
+}
+
+.tab-btn {
+  flex: 1;
+  max-width: 240px;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-btn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--transition-speed);
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--highlight-row);
+}
+
+.tab-btn:hover svg {
+  transform: translateY(-2px);
+}
+
+.tab-btn.active {
+  color: #ffffff;
+  background: var(--accent-gradient);
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+[data-theme="dark"] .tab-btn.active {
+  color: #0b0f19;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+}
+
+/* Tab Content View Controller */
+.tab-content {
+  display: none;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.tab-content.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Image styles in Hero or other sections */
+.hero-image-container {
+  margin-top: 1.5rem;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-color);
+  height: 280px;
+  position: relative;
+}
+
+.hero-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 50%;
+  display: block;
+}
+
+.hero-image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(11, 15, 25, 0.8) 0%, rgba(11, 15, 25, 0) 100%);
+  padding: 1.25rem;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+@media (max-width: 768px) {
+  .tabs-container {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .tab-btn {
+    max-width: 100%;
+  }
+  .hero-image-container {
+    height: 180px;
+  }
+}

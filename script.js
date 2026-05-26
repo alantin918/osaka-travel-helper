@@ -1,4 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Tab Switching Logic
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const targetTab = button.getAttribute('data-tab');
+
+      // Update active button
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      // Switch active content with transition
+      tabContents.forEach(content => {
+        if (content.id === `tab-${targetTab}`) {
+          content.style.display = 'block';
+          // Force reflow
+          content.offsetHeight;
+          content.classList.add('active');
+        } else {
+          content.classList.remove('active');
+          content.style.display = 'none';
+        }
+      });
+    });
+  });
+
   // Theme Toggle Logic
   const themeToggleBtn = document.getElementById('theme-toggle');
   const htmlElement = document.documentElement;
