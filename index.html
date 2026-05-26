@@ -54,7 +54,6 @@
             <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Osaka, Japan</h3>
             <p style="margin: 0; font-size: 0.85rem; color: #cbd5e1; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">行前準備、氣候穿搭與理財計算機已整合</p>
           </div>
-          <span style="font-size: 0.85rem; background: rgba(0, 0, 0, 0.6); padding: 0.25rem 0.75rem; border-radius: 20px; backdrop-filter: blur(4px);">Weilun 專屬版</span>
         </div>
       </div>
     </section>
@@ -154,6 +153,9 @@
       <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
         針對 6 月份的大阪天氣概況，以及您出遊期間（6/17 - 6/21）的氣候趨勢與應對指南：
       </p>
+
+      <!-- Live weather loaded by JS -->
+      <div id="live-weather-status"></div>
       
       <div class="epay-grid">
         <!-- Card 1: 降雨機率與梅雨季 -->
@@ -205,6 +207,57 @@
           <div style="font-size: 0.85rem; font-weight: 700; color: #f59e0b; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
             💡 提示：建議出發前 3 天密切留意降雨概率。
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visit Japan Web Memo Card -->
+    <section class="card" id="vjw-memo-card" style="margin-top: 2rem;">
+      <h2 class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        Visit Japan Web 入境申報 常用資訊備忘錄
+      </h2>
+      <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
+        預先在此填寫您本次入住的大阪飯店資料，填寫 Visit Japan Web 申報或搭機前時可直接一鍵複製，資料會自動保存在您的瀏覽器中：
+      </p>
+      
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: flex-end; border-bottom: 1px dashed var(--border-color); padding-bottom: 0.75rem;">
+          <div class="input-group" style="width: 100%;">
+            <label class="input-label" for="vjw-hotel" style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">1. 飯店名稱 (英文/日文)</label>
+            <input type="text" id="vjw-hotel" class="calc-input" placeholder="例如：Osaka Marriott Miyako Hotel" style="width: 100%;">
+          </div>
+          <button class="btn-primary btn-copy-vjw" data-copy-target="vjw-hotel" style="margin: 0; padding: 0.75rem 1rem; font-size: 0.85rem; border-radius: 8px; font-weight: 700;">一鍵複製</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: flex-end; border-bottom: 1px dashed var(--border-color); padding-bottom: 0.75rem;">
+          <div class="input-group" style="width: 100%;">
+            <label class="input-label" for="vjw-zip" style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">2. 飯店郵遞區號 (7位數)</label>
+            <input type="text" id="vjw-zip" class="calc-input" placeholder="例如：545-0052" style="width: 100%;">
+          </div>
+          <button class="btn-primary btn-copy-vjw" data-copy-target="vjw-zip" style="margin: 0; padding: 0.75rem 1rem; font-size: 0.85rem; border-radius: 8px; font-weight: 700;">一鍵複製</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: flex-end; border-bottom: 1px dashed var(--border-color); padding-bottom: 0.75rem;">
+          <div class="input-group" style="width: 100%;">
+            <label class="input-label" for="vjw-address" style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">3. 飯店詳細地址 (英文/日文)</label>
+            <input type="text" id="vjw-address" class="calc-input" placeholder="例如：1-1-43 Abenosuji, Abeno-ku, Osaka" style="width: 100%;">
+          </div>
+          <button class="btn-primary btn-copy-vjw" data-copy-target="vjw-address" style="margin: 0; padding: 0.75rem 1rem; font-size: 0.85rem; border-radius: 8px; font-weight: 700;">一鍵複製</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: flex-end;">
+          <div class="input-group" style="width: 100%;">
+            <label class="input-label" for="vjw-phone" style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">4. 聯絡電話 (包含日本國碼 +81)</label>
+            <input type="text" id="vjw-phone" class="calc-input" placeholder="例如：+81 6-6628-6111" style="width: 100%;">
+          </div>
+          <button class="btn-primary btn-copy-vjw" data-copy-target="vjw-phone" style="margin: 0; padding: 0.75rem 1rem; font-size: 0.85rem; border-radius: 8px; font-weight: 700;">一鍵複製</button>
         </div>
       </div>
     </section>
@@ -568,6 +621,65 @@
       </section>
     </div>
 
+    <!-- Tax Free Discount Coupons -->
+    <section class="card" id="coupons-section" style="margin-top: 2rem;">
+      <h2 class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="5" x2="5" y2="19"/>
+          <circle cx="6.5" cy="6.5" r="2.5"/>
+          <circle cx="17.5" cy="17.5" r="2.5"/>
+        </svg>
+        日本熱門藥妝電器 免稅 10% + 獨家折價券彙整
+      </h2>
+      <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
+        在日本結帳時，直接點擊下方連結出示優惠券畫面，搭配護照辦理免稅即可享有雙重折上折：
+      </p>
+      
+      <div class="epay-grid">
+        <!-- Coupon 1: Bic Camera -->
+        <div class="epay-item" style="border-color: rgba(59, 130, 246, 0.2);">
+          <div>
+            <div style="font-weight: 800; font-size: 1.1rem; color: #3b82f6; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
+              📷 Bic Camera (相機/電器/日用)
+            </div>
+            <ul style="list-style: none; padding-left: 0; font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.5rem;">
+              <li>• <strong>回饋內容</strong>：<strong>免稅 10% + 電器折 7%</strong>（玩具折 5%、日用品折 3%）。</li>
+              <li>• <strong>適用範圍</strong>：難波店、阿倍野店等全日本 Bic Camera 連鎖店。</li>
+            </ul>
+          </div>
+          <a href="https://www.biccamera.com.target.tw.hb.hp.transer.com/bc/c/topics/coupon/index.jsp" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top: 1rem; text-align: center; text-decoration: none; display: block; font-size: 0.85rem; font-weight: 700; width: 100%;">開啟官方折價券網頁</a>
+        </div>
+
+        <!-- Coupon 2: Don Don Donki -->
+        <div class="epay-item" style="border-color: rgba(16, 185, 129, 0.2);">
+          <div>
+            <div style="font-weight: 800; font-size: 1.1rem; color: #10b981; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
+              🐧 唐吉訶德 (驚安殿堂)
+            </div>
+            <ul style="list-style: none; padding-left: 0; font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.5rem;">
+              <li>• <strong>回饋內容</strong>：<strong>免稅 10% + 滿萬日圓再折 5%</strong>。</li>
+              <li>• <strong>注意規則</strong>：結帳時必須以手機開啟電子優惠券網頁，截圖無效。</li>
+            </ul>
+          </div>
+          <a href="https://www.donki.com/coupon/web/?site=tw" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top: 1rem; text-align: center; text-decoration: none; display: block; font-size: 0.85rem; font-weight: 700; width: 100%;">開啟 Donki 電子券網頁</a>
+        </div>
+
+        <!-- Coupon 3: Matsumoto Kiyoshi -->
+        <div class="epay-item" style="border-color: rgba(245, 158, 11, 0.2);">
+          <div>
+            <div style="font-weight: 800; font-size: 1.1rem; color: #f59e0b; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
+              💊 松本清 (藥妝首選)
+            </div>
+            <ul style="list-style: none; padding-left: 0; font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.5rem;">
+              <li>• <strong>回饋內容</strong>：<strong>免稅 10% + 滿三萬日圓折 5% / 滿五萬日圓折 7%</strong>。</li>
+              <li>• <strong>省心藥妝</strong>：大阪心齋橋與道頓堀分店極多，搭配高回饋信用卡更划算。</li>
+            </ul>
+          </div>
+          <a href="https://www.matsukiyococokara-online.com/campaign/taxfree/" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top: 1rem; text-align: center; text-decoration: none; display: block; font-size: 0.85rem; font-weight: 700; width: 100%;">開啟松本清免稅專區</a>
+        </div>
+      </div>
+    </section>
+
     <!-- 5. Travel Apps Section -->
     <section class="card" id="apps-section" style="margin-top: 2rem;">
       <h2 class="card-title">
@@ -626,7 +738,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 Osaka Helper - Weilun 專用版</p>
+    <p>&copy; 2026 Osaka Helper</p>
   </footer>
 
   <script src="script.js"></script>

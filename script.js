@@ -307,4 +307,85 @@ document.addEventListener('DOMContentLoaded', () => {
       summaryDiv.style.display = 'none';
     }
   }
+
+  // --- A. Live Osaka Weather API ---
+  const weatherStatusEl = document.getElementById('live-weather-status');
+  async function fetchLiveWeather() {
+    if (!weatherStatusEl) return;
+    try {
+      const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=34.6937&longitude=135.5023&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code&timezone=Asia%2FTokyo');
+      const data = await response.json();
+      if (data && data.current) {
+        const temp = Math.round(data.current.temperature_2m);
+        const humidity = data.current.relative_humidity_2m;
+        const apparent = Math.round(data.current.apparent_temperature);
+        const code = data.current.weather_code;
+        
+        let weatherDesc = '晴朗';
+        let weatherIcon = '☀️';
+        if (code >= 1 && code <= 3) { weatherDesc = '多雲'; weatherIcon = '⛅'; }
+        else if (code >= 51 && code <= 67) { weatherDesc = '毛毛雨'; weatherIcon = '🌦️'; }
+        else if (code >= 71 && code <= 82) { weatherDesc = '陣雨/雨天'; weatherIcon = '🌧️'; }
+        else if (code >= 95) { weatherDesc = '雷雨'; weatherIcon = '⛈️'; }
+
+        let tip = '天氣晴朗，適合戶外行程！';
+        if (temp > 27) tip = '天氣悶熱，注意補充水分，防曬防中暑！';
+        if (code >= 51) tip = '今日有雨，建議攜帶雨具，多安排室內行程。';
+
+        weatherStatusEl.innerHTML = `
+          <div style="background: var(--highlight-row); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase;">大阪即時氣象看板</div>
+              <div style="font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; margin-top: 0.15rem;">
+                <span>${weatherIcon} ${temp}°C</span>
+                <span style="font-size: 0.88rem; font-weight: 500; color: var(--text-secondary);">${weatherDesc} (體感 ${apparent}°C)</span>
+              </div>
+            </div>
+            <div style="text-align: right; max-width: 60%; font-size: 0.8rem; line-height: 1.4; color: var(--accent-color); font-weight: 600;">
+              💡 提醒：${tip}
+            </div>
+          </div>
+        `;
+      }
+    } catch (err) {
+      console.error('Error fetching live weather:', err);
+      weatherStatusEl.innerHTML = `<p style="font-size: 0.85rem; color: var(--text-muted);">無法載入大阪即時氣象，請參考下方中長期梅雨預報。</p>`;
+    }
+  }
+  fetchLiveWeather();
+
+  // --- B. Visit Japan Web (VJW) Memo Logic ---
+  const vjwInputs = ['vjw-hotel', 'vjw-zip', 'vjw-address', 'vjw-phone'];
+  vjwInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = localStorage.getItem(`osaka_${id}`) || '';
+      el.addEventListener('input', (e) => {
+        localStorage.setItem(`osaka_${id}`, e.target.value);
+      });
+    }
+  });
+
+  const copyButtons = document.querySelectorAll('.btn-copy-vjw');
+  copyButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-copy-target');
+      const inputEl = document.getElementById(targetId);
+      if (inputEl) {
+        inputEl.select();
+        inputEl.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(inputEl.value).then(() => {
+          const originalText = btn.innerText;
+          btn.innerText = '已複製！';
+          btn.style.backgroundColor = '#10b981';
+          btn.style.color = '#ffffff';
+          setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.backgroundColor = '';
+            btn.style.color = '';
+          }, 1200);
+        });
+      }
+    });
+  });
 });
