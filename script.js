@@ -107,21 +107,20 @@ document.addEventListener('DOMContentLoaded', () => {
     twdOutput.value = Math.round(jpy * rate);
   });
 
-  // Credit Card & E-Payment Calculator Logic
+  // Credit Card & E-Payment Calculator Logic (Guaranteed/Conservative Mode - Excludes limited bank-specific extra bonuses)
   const spendingInput = document.getElementById('spending-input');
   const tableBody = document.getElementById('table-body');
 
   const cardData = [
-    { rank: 1, name: '全支付 (綁將來銀行帳戶) 📱', type: 'epay', rate: 0.115, limit: 2500, maxRebate: 287, feeDesc: '免 1.5% 手續費 (已含在回饋中)' },
-    { rank: 2, name: '全支付 (綁國泰世華帳戶) 📱', type: 'epay', rate: 0.085, limit: 2000, maxRebate: 170, feeDesc: '免 1.5% 手續費 (已含在回饋中)' },
-    { rank: 3, name: '玉山 熊本熊卡 (JCB 刷卡/Apple Pay) 💳', type: 'card', rate: 0.070, limit: 8333, maxRebate: 583, feeDesc: '標示 8.5% 扣 1.5% 海外手續費' },
-    { rank: 4, name: '永豐 幣倍卡 (實體刷卡) 💳', type: 'card', rate: 0.045, limit: 20000, maxRebate: 900, feeDesc: '標示 6.0% 扣 1.5% 海外手續費' },
-    { rank: 5, name: '街口支付 (綁台新街口聯名卡) 📱', type: 'epay', rate: 0.035, limit: 333333, maxRebate: 11666, feeDesc: '免 1.5% 手續費 (已含在回饋中)' },
-    { rank: 6, name: '中信 LINE Pay卡 💳', type: 'card', rate: 0.035, limit: 20454, maxRebate: 716, feeDesc: '標示 5.0% 扣 1.5% 海外手續費' },
-    { rank: 7, name: '星展 eco/極簡卡 💳', type: 'card', rate: 0.035, limit: 15000, maxRebate: 525, feeDesc: '標示 5.0% 扣 1.5% 海外手續費' },
-    { rank: 8, name: '玉山 unicard 💳', type: 'card', rate: 0.030, limit: 142857, maxRebate: 4286, feeDesc: '標示 4.5% 扣 1.5% 海外手續費' },
-    { rank: 9, name: '永豐 大戶卡 💳', type: 'card', rate: 0.030, limit: 16000, maxRebate: 480, feeDesc: '標示 4.5% 扣 1.5% 海外手續費' },
-    { rank: 10, name: '國泰 CUBE卡 💳', type: 'card', rate: 0.020, limit: Infinity, maxRebate: Infinity, feeDesc: '標示 3.5% 扣 1.5% 海外手續費' }
+    { rank: 1, name: '玉山 熊本熊卡 (JCB 刷卡/Apple Pay) 💳', type: 'card', rate: 0.070, limit: 8333, maxRebate: 583, feeDesc: '標示 8.5% 扣 1.5% 海外手續費 (100% 穩拿，首選防線)' },
+    { rank: 2, name: '永豐 幣倍卡 (實體刷卡) 💳', type: 'card', rate: 0.045, limit: 20000, maxRebate: 900, feeDesc: '標示 6.0% 扣 1.5% 海外手續費 (100% 穩拿)' },
+    { rank: 3, name: '全支付 (基本無加碼/帳戶扣款) 📱', type: 'epay', rate: 0.035, limit: 3428, maxRebate: 120, feeDesc: '免 1.5% 手續費 (基本盤 3.5%，假設無銀行加碼)' },
+    { rank: 4, name: '街口支付 (綁台新街口聯名卡) 📱', type: 'epay', rate: 0.035, limit: 333333, maxRebate: 11666, feeDesc: '免 1.5% 手續費 (高額度上限 3.5%)' },
+    { rank: 5, name: '中信 LINE Pay卡 💳', type: 'card', rate: 0.035, limit: 20454, maxRebate: 716, feeDesc: '標示 5.0% 扣 1.5% 海外手續費' },
+    { rank: 6, name: '星展 eco/極簡卡 💳', type: 'card', rate: 0.035, limit: 15000, maxRebate: 525, feeDesc: '標示 5.0% 扣 1.5% 海外手續費' },
+    { rank: 7, name: '玉山 unicard 💳', type: 'card', rate: 0.030, limit: 142857, maxRebate: 4286, feeDesc: '標示 4.5% 扣 1.5% 海外手續費' },
+    { rank: 8, name: '永豐 大戶卡 💳', type: 'card', rate: 0.030, limit: 16000, maxRebate: 480, feeDesc: '標示 4.5% 扣 1.5% 海外手續費' },
+    { rank: 9, name: '國泰 CUBE卡 💳', type: 'card', rate: 0.020, limit: Infinity, maxRebate: Infinity, feeDesc: '標示 3.5% 扣 1.5% 海外手續費' }
   ];
 
   spendingInput.addEventListener('input', calculateCashback);
@@ -243,13 +242,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (totalSpending > 0) {
       summaryDiv.innerHTML = `
         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; color: var(--accent-color);">
-          🌟 最佳拆單與電支組合方案建議 (總消費 $${Math.round(totalSpending).toLocaleString()} 元)
+          🛡️ 保守/穩拿版 最佳拆單與消費建議 (總消費 $${Math.round(totalSpending).toLocaleString()} 元)
         </h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">※已扣除銀行限量加碼，採用 100% 穩拿的基礎回饋與信用卡做最安全的防守配置。</p>
         <ul style="list-style: none; padding-left: 0; margin-bottom: 1rem; line-height: 1.8; font-size: 0.95rem;">
           ${splitSummaryList.join('')}
         </ul>
         <div style="font-size: 1.1rem; font-weight: 800; border-top: 1px solid var(--border-color); padding-top: 0.75rem; display: flex; justify-content: space-between;">
-          <span>最佳策略實質總淨回饋：</span>
+          <span>穩拿策略實質總淨回饋：</span>
           <span style="color: #10b981;">$${totalOptRebate.toLocaleString()} 元 (實質平均回饋率 ${(totalOptRebate / totalSpending * 100).toFixed(2)}%)</span>
         </div>
       `;
