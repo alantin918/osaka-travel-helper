@@ -89,6 +89,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const rateInput = document.getElementById('rate-input');
   const applyBtn = document.getElementById('apply-to-calc');
 
+  // Fetch live JPY to TWD exchange rate on load
+  async function fetchLiveRate() {
+    try {
+      const response = await fetch('https://open.er-api.com/v6/latest/JPY');
+      const data = await response.json();
+      if (data && data.rates && data.rates.TWD) {
+        const rate = data.rates.TWD;
+        rateInput.value = rate.toFixed(4);
+        
+        // Automatically calculate JPY 10,000 to TWD based on live rate
+        const jpyVal = parseFloat(jpyInput.value) || 10000;
+        twdOutput.value = Math.round(jpyVal * rate);
+        
+        // Trigger table update if initial value changes
+        calculateCashback();
+      }
+    } catch (e) {
+      console.warn('Failed to fetch live exchange rate, using fallback 0.2100:', e);
+    }
+  }
+  fetchLiveRate();
+
   jpyInput.addEventListener('input', () => {
     const rate = parseFloat(rateInput.value) || 0.21;
     const jpy = parseFloat(jpyInput.value) || 0;
