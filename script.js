@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { rank: 4, name: '街口支付 (綁台新街口聯名卡) 📱', type: 'epay', rate: 0.035, limit: 333333, maxRebate: 11666, feeDesc: '免 1.5% 手續費 (高額度上限 3.5%)' },
     { rank: 5, name: '中信 LINE Pay卡 💳', type: 'card', rate: 0.035, limit: 20454, maxRebate: 716, feeDesc: '標示 5.0% 扣 1.5% 海外手續費' },
     { rank: 6, name: '星展 eco/極簡卡 💳', type: 'card', rate: 0.035, limit: 15000, maxRebate: 525, feeDesc: '標示 5.0% 扣 1.5% 海外手續費' },
-    { rank: 7, name: '玉山 unicard 💳', type: 'card', rate: 0.030, limit: 142857, maxRebate: 4286, feeDesc: '標示 4.5% 扣 1.5% 海外手續費' },
+    { rank: 7, name: '玉山 unicard 💳', type: 'card', rate: 0.030, limit: 142857, maxRebate: 4286, feeDesc: '標示 4.5% 扣 1.5% 海外手續費 (需額外訂閱 149元 UP選)' },
     { rank: 8, name: '永豐 大戶卡 💳', type: 'card', rate: 0.030, limit: 16000, maxRebate: 480, feeDesc: '標示 4.5% 扣 1.5% 海外手續費' },
     { rank: 9, name: '國泰 CUBE卡 💳', type: 'card', rate: 0.020, limit: Infinity, maxRebate: Infinity, feeDesc: '標示 3.5% 扣 1.5% 海外手續費' }
   ];
