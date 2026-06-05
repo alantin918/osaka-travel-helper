@@ -43,23 +43,17 @@
   <main class="container">
     <!-- Hero Section -->
     <section class="hero-section">
+      <div class="hero-tag">Osaka Helper</div>
       <h1>大阪旅遊隨身助手</h1>
       <p>輕鬆比對出國必備的保險、eSIM 與信用卡回饋，輸入預算即可自動為您規劃最佳刷卡順序！</p>
       
-      <!-- Hero visual illustration -->
-      <div class="hero-image-container">
-        <img src="https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&w=1200&q=80" alt="大阪城晴天風景" loading="lazy">
-        <div class="hero-image-overlay">
-          <div>
-            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Osaka, Japan</h3>
-            <p style="margin: 0; font-size: 0.85rem; color: #cbd5e1; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">行前準備、氣候穿搭與理財計算機已整合</p>
-          </div>
-        </div>
-      </div>
+      <!-- Live weather loaded dynamically by JS inside Hero -->
+      <div id="live-weather-status"></div>
     </section>
 
     <!-- Tab navigation switcher -->
     <div class="tabs-container">
+      <div class="tab-indicator"></div>
       <button class="tab-btn active" data-tab="prep">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -162,8 +156,7 @@
         針對 6 月份的大阪天氣概況，以及您出遊期間（6/17 - 6/21）的氣候趨勢與應對指南：
       </p>
 
-      <!-- Live weather loaded by JS -->
-      <div id="live-weather-status"></div>
+
       
       <div class="epay-grid">
         <!-- Card 1: 降雨機率與梅雨季 -->

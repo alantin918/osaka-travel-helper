@@ -2,6 +2,28 @@ document.addEventListener('DOMContentLoaded', () => {
   // Tab Switching Logic
   const tabButtons = document.querySelectorAll('.tab-btn');
   const tabContents = document.querySelectorAll('.tab-content');
+  const tabIndicator = document.querySelector('.tab-indicator');
+
+  function updateTabIndicator(activeBtn) {
+    if (!tabIndicator || !activeBtn) return;
+    const left = activeBtn.offsetLeft;
+    const width = activeBtn.offsetWidth;
+    tabIndicator.style.transform = `translateX(${left - 4}px)`; // Offset for container padding
+    tabIndicator.style.width = `${width}px`;
+  }
+
+  // Initialize indicator position
+  const initialActiveTab = document.querySelector('.tab-btn.active');
+  if (initialActiveTab) {
+    // Small timeout to ensure offsets are properly computed after layout
+    setTimeout(() => updateTabIndicator(initialActiveTab), 100);
+  }
+
+  // Update indicator on window resize to ensure responsiveness
+  window.addEventListener('resize', () => {
+    const activeBtn = document.querySelector('.tab-btn.active');
+    if (activeBtn) updateTabIndicator(activeBtn);
+  });
 
   tabButtons.forEach(button => {
     button.addEventListener('click', () => {
@@ -10,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Update active button
       tabButtons.forEach(btn => btn.classList.remove('active'));
       button.classList.add('active');
+      updateTabIndicator(button);
 
       // Switch active content with transition
       tabContents.forEach(content => {
@@ -581,11 +604,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!summaryDiv) {
       summaryDiv = document.createElement('div');
       summaryDiv.id = 'optimal-summary-box';
-      summaryDiv.style.marginTop = '2rem';
-      summaryDiv.style.padding = '1.5rem';
-      summaryDiv.style.borderRadius = '16px';
-      summaryDiv.style.backgroundColor = 'var(--bg-primary)';
-      summaryDiv.style.border = '1px dashed var(--accent-color)';
       document.getElementById('credit-card-section').appendChild(summaryDiv);
     }
 
@@ -634,16 +652,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (code >= 51) tip = '今日有雨，建議攜帶雨具，多安排室內行程。';
 
         weatherStatusEl.innerHTML = `
-          <div style="background: var(--highlight-row); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase;">大阪即時氣象看板</div>
-              <div style="font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; margin-top: 0.15rem;">
-                <span>${weatherIcon} ${temp}°C</span>
-                <span style="font-size: 0.88rem; font-weight: 500; color: var(--text-secondary);">${weatherDesc} (體感 ${apparent}°C)</span>
-              </div>
+          <div class="hero-weather-widget">
+            <div class="hero-weather-main">
+              <span>${weatherIcon}</span>
+              <span class="hero-weather-temp">${temp}°C</span>
+              <span class="hero-weather-desc">${weatherDesc} (體感 ${apparent}°C)</span>
             </div>
-            <div style="text-align: right; max-width: 60%; font-size: 0.8rem; line-height: 1.4; color: var(--accent-color); font-weight: 600;">
-              💡 提醒：${tip}
+            <div class="hero-weather-divider"></div>
+            <div class="hero-weather-tip">
+              💡 ${tip}
             </div>
           </div>
         `;
