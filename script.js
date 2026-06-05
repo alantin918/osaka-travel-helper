@@ -94,11 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // To-Do Checklist Logic (with LocalStorage)
   const todoList = document.getElementById('todo-list');
   const defaultTasks = [
-    { text: '填寫 Visit Japan Web (入境海關申報)', checked: false },
+    { text: '填寫 Visit Japan Web (2024新制：海關與入境 QR 二合一)', checked: false },
     { text: '購買威訊 eSIM 或 翔翼日行卡', checked: false },
     { text: '線上投保旅遊險 (推薦新安東京 $496 元版)', checked: false },
     { text: '換取少量日幣現鈔', checked: false },
-    { text: '下載大阪地鐵繁體中文 PDF 路線圖', checked: false },
+    { text: '下載地鐵路線圖 (注意：實體周遊卡已停售，改用樂遊券數位版)', checked: false },
     { text: '下載並註冊 USJ 官方 App', checked: false }
   ];
 
@@ -613,6 +613,9 @@ document.addEventListener('DOMContentLoaded', () => {
           🛡️ 保守/穩拿版 最佳拆單與消費建議 (總消費 $${Math.round(totalSpending).toLocaleString()} 元)
         </h3>
         <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">※已扣除銀行限量加碼，採用 100% 穩拿的基礎回饋與信用卡做最安全的防守配置。</p>
+        <div style="margin: 0.85rem 0; padding: 0.75rem 1rem; background: rgba(239, 68, 68, 0.08); border-left: 3px solid #ef4444; border-radius: 8px; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55;">
+          ⚠️ <strong>防踩雷提醒 (日幣結帳)</strong>：在實體店面刷卡結帳時，若店員或刷卡機詢問「結帳貨幣」，<strong>請務必選擇日幣 (JPY) 結帳</strong>！若選台幣 (TWD) 會觸發 DCC 動態貨幣轉換，被現場加收高達 **4% ~ 15%** 的隱形手續費！
+        </div>
         <ul style="list-style: none; padding-left: 0; margin-bottom: 1rem; line-height: 1.8; font-size: 0.95rem;">
           ${splitSummaryList.join('')}
         </ul>

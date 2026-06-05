@@ -133,7 +133,7 @@ header {
   position: relative;
   background: var(--glass-bg);
   border-bottom: 1px solid var(--border-color);
-  transition: border-color var(--transition-speed);
+  transition: border-color var(--transition-speed), background-color var(--transition-speed);
 }
 
 [data-theme="dark"] header {
@@ -243,6 +243,12 @@ header {
   filter: drop-shadow(var(--hero-text-shadow));
 }
 
+.hero-section p {
+  color: var(--text-secondary);
+  font-size: 1.15rem;
+  max-width: 650px;
+  margin: 0 auto;
+  text-shadow: var(--hero-text-shadow);
 }
 
 /* Hero Weather Widget */
@@ -300,7 +306,7 @@ header {
   border-radius: 24px;
   padding: 2.5rem;
   box-shadow: var(--card-shadow);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color var(--transition-speed);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color var(--transition-speed), background-color var(--transition-speed);
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(16px);
