@@ -1162,3 +1162,41 @@ footer {
   border-color: #ffffff;
   box-shadow: 0 4px 10px rgba(255,255,255,0.15);
 }
+
+/* ===== 區塊快速跳轉導覽 ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+section[id], div[id] {
+  scroll-margin-top: 100px; /* 避開 sticky 分頁列 */
+}
+
+.quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.quick-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.quick-nav a:hover {
+  background-color: var(--accent-color);
+  color: #fff;
+  transform: translateY(-1px);
+}
