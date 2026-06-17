@@ -699,6 +699,7 @@ tr:nth-child(3) .rank-badge {
   padding: 0.25rem 0.5rem;
   border-radius: 6px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .status-normal {
